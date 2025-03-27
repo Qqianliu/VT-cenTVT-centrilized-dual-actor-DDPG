@@ -1,6 +1,7 @@
 # time 20230325
 # by qian
-# 利用ddpg 做出缓存大时间尺度上，在小时间尺度上，ddpg算法带宽、计算资源分配和计算卸载比例的决策！！
+# use ddpg for large-timescale cache decision and  another ddpg agent for bandwidyth computing and spliting ratio decision
+# 做出缓存大时间尺度上，在小时间尺度上，ddpg算法带宽、计算资源分配和计算卸载比例的决策！！
 import os
 import time
 import torch
@@ -14,8 +15,8 @@ import matplotlib.pyplot as plt
 from arguments import parse_args
 from Replay_buffer import ReplayBuffer
 from model import DDPG
-from singleMEC1.env import MultiAgentEnv
-from singleMEC1.my_world import Scenario
+from env import MultiAgentEnv
+from my_world import Scenario
 from collections import namedtuple
 
 def make_off_env():
@@ -38,6 +39,7 @@ def train(arglist):
     print('step 1 Env {} is right ...'.format(arglist.scenario_name))
 
     print("""step2: create agents""")
+    # first you should now the dimention of state and action space, then you can generated an agent!
     # 首先是获取到 服务器智能体的状态和动作的维度，用来产生智能体：
     #print("env.observation_space_server_cache",env.observation_space_server_cache[0])
     obs_shape_server = env.observation_space[0].shape[0]
@@ -57,12 +59,13 @@ def train(arglist):
     cache_fre = 1
     game_step = 0
     game_step_cache = 0
+    # for saving the utility factor( time and cost)at each smale-time scale step 
     # 每一步用户和服务器的效用
     users_time = []
     server_switch_cost = []
     rewards_server_cache = []
     reward_small_ra = []
-
+     # reset the two layers by the reset_high
     # 刚开始的时候。是上下两层都进行重置！！！只用reset_high 既可
     # 获得到初始化的状态
     # max_epsode 500
@@ -137,7 +140,7 @@ def train(arglist):
                 #print("the small reward :", reward_small)
                 #print("cache_value",cache_value)
                 reward_average_small.append(reward_small)
-
+                # in each small-time scale slot you should updata the request.
                 #更新每个时隙里面用户的请求，大小
                 env.world.step()
                 next_obs_small = env._get_obs()
