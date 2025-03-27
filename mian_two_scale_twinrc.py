@@ -16,8 +16,8 @@ import matplotlib.pyplot as plt
 from arguments import parse_args
 from Replay_buffer import ReplayBuffer
 from model_twin_actor import DDPG
-from singleMEC1.env import MultiAgentEnv
-from singleMEC1.my_world import Scenario
+from env import MultiAgentEnv
+from my_world import Scenario
 from collections import namedtuple
 
 def make_off_env():
