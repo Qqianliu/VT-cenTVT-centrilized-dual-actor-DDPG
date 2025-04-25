@@ -8,7 +8,7 @@ This code how the proposed DRL-agent does the bandwidth, power and cache decisio
 step1: First, you should have a python venv,python3,torch and so on
 step2: Then, you  go the mian_two_scale_twin.py to reproduce our training, and save the reward.text 
 step3: Finally, you can use the plot_reward.py to show the results.
-
+# note: You can see my result-reward curve image, where I compare the reward function (Proposed-DDPG from running mian_two_scale_twin.py)of my proposed algorithm with the existing model(Independent-DDPG). If you want to further reproduce my results, you need to follow the same steps and run mian__two_scale-one.py, and get the reward function of Independent-DDPG
 
 # If you want design your own DRL-agent for different use case,
  ** you can change the model : for different DRL algorithms (model.py) **,like DDPG,DQN,PPO, in my work i chose the the orginal DDPG (model.py) and our proposed Improved-DDPG (model-twin-actor.py, and model-twin-actor1.py), here if you change the DRL algorithm, you also need to change the  (Replay_buffer.py ) for your own memory storage {s,a,s',r}.
