@@ -1,8 +1,8 @@
 # time 20230327
 # by qian
-# 利用ddpg de actor large 做出缓存大时间尺度上，在小时间尺度上，actor small ddpg算法带宽、计算资源分配和计算卸载比例的决策！！
-# 这里的状态的是全局的状态既包括了瞬时的环境状态也包括了长期的状态； 网络了包括了两个actor，一个critic 动作也是两个一个变化一个不变化
-# 奖励函数也是全局的。
+# Use ddpg-large actor  to make decisions on cache bandwidth, computing resource allocation, and computing offloading ratio on a large time scale and actor small on a small time scale! !
+# The state here is the global state, which includes both the instantaneous environment state and the long-term state; the network includes two actors, and a critic action is also two, one changes and the other does not change
+# The reward function is also global.
 import os
 import time
 import torch
@@ -40,7 +40,7 @@ def train(arglist):
     print('step 1 Env {} is right ...'.format(arglist.scenario_name))
 
     print("""step2: create agents""")
-    # 首先是获取到 服务器智能体的状态和动作的维度，用来产生智能体：
+    # The first step is to obtain the state and action dimensions of the server agent to generate the agent:
     #print("env.observation_space_server_cache",env.observation_space_server_cache[0])
     obs_shape_server_cache = env.observation_space[0].shape[0]
     print('obs_shape_n_server_cache',obs_shape_server_cache)
@@ -59,16 +59,16 @@ def train(arglist):
     cache_fre = 10
     game_step = 0
     game_step_cache = 0
-    # 每一步用户和服务器的效用
+    # Utility of users and servers at each step
     users_time = []
     server_switch_cost = []
     rewards_server_cache = []
     reward= []
 
-    # 刚开始的时候。是上下两层都进行重置！！！只用reset_high 既可
-    # 获得到初始化的状态
+    # At the beginning, both the upper and lower layers are reset!!! Just use reset_high
+    # Get the initialized state
     # max_epsode 500
-    # each_episode: 100 step, each 5step 做一下缓存， 100次 此的卸载和带宽分配决策
+    # each_episode: 100 step, each 5 step Do caching one time, 100 times this offload and bandwidth allocation decision
     var_cache = 1
     var_small = 1
     for episode_gone in range(arglist.max_episode):
@@ -85,7 +85,7 @@ def train(arglist):
         ep_time = 0.0
         reward_average_small = []
         action_n_server_cache = 0
-        for step in range(arglist.per_episode_max_len):  # 每一回合里面的step 20 * 5数目
+        for step in range(arglist.per_episode_max_len):  # The number of steps in each round is 20 * 5
             print("this is the step " + str(step) + " of episode " + str(episode_gone))
             env.world.game_step = game_step
             server = env.server
@@ -93,7 +93,7 @@ def train(arglist):
             if step % cache_fre == 0:
                 var_cache *= 0.9882
                 var_small *= 0.9995
-                # 500 步0.988
+                # 500 step 0.988
                 past_cache = server.cache
                 #print("obsivation:",obs_total)
                 action_server_cache = twin_actor_agent.select_action_large(obs_total)
@@ -146,7 +146,7 @@ def train(arglist):
                 reward_total = reward_small - swithc_cache_value - constraint_over_cache_cap
                 reward_total1 = reward_small
 
-                #更新每个时隙里面用户的请求，大小
+                #Update the user's request size in each time slot
                 env.world.step()
 
                 next_obs = env._get_obs()
@@ -218,7 +218,7 @@ def train(arglist):
                 if game_step >= arglist.learning_start_step:
                     if game_step % arglist.learning_fre == 0:
                         twin_actor_agent.update(arglist)
-                        # # cache开始训练的时间点： 自己设计呢
+                    
 
         # print("step_qoe",step_qoe)
         reward.append(ep_reward_total)
@@ -232,13 +232,13 @@ if __name__ == '__main__':
     arglist = parse_args()
     # agent1, agent2, agent_user,a1,a2,a6,a10,a17,a19,all_a = train(arglist)
     users_time, reward,server_switch_cost= train(arglist)
-    with open("simulation1/users_time_response_scheme3.txt", "w") as f:
+    with open("simulation1/users_time.txt", "w") as f:
         for r in users_time:
             f.write(str(r) + '\n')
-    with open("simulation1/reward_response_scheme3.txt", "w") as f:
+    with open("simulation1/reward.txt", "w") as f:
         for cost in reward:
             f.write(str(cost) + '\n')
-    with open("simulation1/server_switch_cost_response_scheme3.txt", "w") as f:
+    with open("simulation1/server_switch_cost", "w") as f:
         for ep_energy in server_switch_cost:
             f.write(str(ep_energy) + '\n')
     print('end')
