@@ -4,9 +4,12 @@ This repository provide the code for paper Q. Liu, H. Zhang, X. Zhang and D. Yua
              resources allocation;multi-access edge computing;two-timescale;centralized dual-actor deep deterministic policy gradient},
 This code how the proposed DRL-agent does the bandwidth, power and cache decision for a two-timescale edge computing scenario.
 
-**If you want to reproduce  our proposed centrilized-dual-actor-DDPG,  
-First, you should have a python venv,python3,torch and so on**
-**Then, you  go the mian_two_scale_twin.py to reproduce our training results (Fig.1).**
+If you want to reproduce  our proposed centrilized-dual-actor-DDPG,  
+**First, you should have a python venv,python3,torch and so on**
+
+**Then, you  go the mian_two_scale_twin.py to reproduce our training, and save the reward.text ****
+**Finally, you can use the plot_reward.py to show the results.
+
 
 If you want design your own DRL-agent for different use case,
  ** you can change the model : for different DRL algorithms (model.py) **,like DDPG,DQN,PPO, in my work i chose the the orginal DDPG (model.py) and our proposed Improved-DDPG (model-twin-actor.py, and model-twin-actor1.py), here if you change the DRL algorithm, you also need to change the  (Replay_buffer.py ) for your own memory storage {s,a,s',r}.
