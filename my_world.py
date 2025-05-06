@@ -1,8 +1,8 @@
 # 相关自己场景的一些具体的参数设置即构建一个自己的相关的环境，以及重置环境，获取归一化状态，得到奖励
 
 import numpy as np
-from singleMEC1.core import  *
-from singleMEC1.scenario import BaseScenario
+from core import  *
+from scenario import BaseScenario
 
 class Scenario(BaseScenario):
         def make_world(self):
